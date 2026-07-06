@@ -5,9 +5,9 @@ library(gridExtra)
 t_values <- seq(0, 2, by = 0.01)
 
 custom_labels <- c("S_D1" = bquote(italic(S[D1])), 
-                   "S_D2" = bquote(italic(S[D2])), 
+                   "S_D2" = bquote(italic(S[D0])), 
                    "S_R1" = bquote(italic(S[R1])), 
-                   "S_R2" = bquote(italic(S[R2])))
+                   "S_R2" = bquote(italic(S[R0])))
 colors <- c("S_D1" = "blue", "S_D2" = "green", "S_R1" = "red", "S_R2" = "purple")
 
 t0 = 1/2; lambda = 1/4
@@ -75,11 +75,11 @@ df_list_three <- list(
 
 custom_labels_three <- list(
   c("S_1" = bquote(italic(S[D1])), 
-    "S_2" = bquote(italic(S[D2])), 
-    "S_3" = bquote(italic(S[R1]==S[R2]))),
-  c("S_1" = bquote(italic(S[D1]==S[D2])), 
+    "S_2" = bquote(italic(S[D0])), 
+    "S_3" = bquote(italic(S[R1]==S[R0]))),
+  c("S_1" = bquote(italic(S[D1]==S[D0])), 
     "S_2" = bquote(italic(S[R1])), 
-    "S_3" = bquote(italic(S[R2])))  
+    "S_3" = bquote(italic(S[R0])))  
 )
 
 colors_three <- c("S_1" = "blue", "S_2" = "green", "S_3" = "red")
@@ -89,7 +89,7 @@ title<- c("Proportional hazards", "Crossing hazards", "Crossing survival functio
 
 plot_list <- list()
 
-pdf(file = "plots_08/simu_setting.pdf", width = 8, height = 5.5)
+pdf(file = "plots/simu_setting.pdf", width = 8, height = 5.5)
 
 for (i in 1:length(df_list)) {
   df_long <- pivot_longer(df_list[[i]], cols = -t, names_to = "Function", values_to = "Value")

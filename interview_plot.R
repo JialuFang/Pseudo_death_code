@@ -3,13 +3,13 @@ library(gridExtra)
 alpha <- 0.05
 samplesize_list <- c(50, 100, 200, 500)
 
-pvalue_df <- data.frame(matrix(ncol = 9, nrow = 4))
-colnames(pvalue_df) <- c("sample_size", "log_rank_prog", "log_rank_death", "win_ratio", 
-                         "net_benefit", "win_odds", "pseudo_death_Z", "pseudo_death_per",
+pvalue_df <- data.frame(matrix(ncol = 7, nrow = 4))
+colnames(pvalue_df) <- c("sample_size", "log_rank_prog", "log_rank_death", "win_statistic", 
+                         "pseudo_death_Z", "pseudo_death_per",
                          "pseudo_death_wald")
 
 res.ls <- list()
-for (k in c(1:1)){
+for (k in c(1:8)){
   print(k)
   for (j in c(1:4)){
     samplesize <- samplesize_list[j]
@@ -20,8 +20,6 @@ for (k in c(1:1)){
     log_rank_prog_p_values <- numeric(length(test.res))
     log_rank_death_p_values <- numeric(length(test.res))
     win_ratio_p_values <- numeric(length(test.res))
-    net_benefit_p_values <- numeric(length(test.res))
-    win_odds_p_values <- numeric(length(test.res))
     pseudo_death_Z_p_values <- numeric(length(test.res))
     pseudo_death_per_p_values <- numeric(length(test.res))
     pseudo_death_wald_p_values <- numeric(length(test.res))
@@ -35,18 +33,6 @@ for (k in c(1:1)){
       } else {
         win_ratio_p_values[i] <- as.numeric(win_ratio_p)
       }
-      net_benefit_p <- test.res[[i]]$net_benefit_p
-      if (grepl("<", net_benefit_p)) {
-        net_benefit_p_values[i] <- 0
-      } else {
-        net_benefit_p_values[i] <- as.numeric(net_benefit_p)
-      }
-      win_odds_p <- test.res[[i]]$win_odds_p
-      if (grepl("<", win_odds_p)) {
-        win_odds_p_values[i] <- 0
-      } else {
-        win_odds_p_values[i] <- as.numeric(win_odds_p)
-      }
       pseudo_death_Z_p_values[i] <- test.res[[i]]$pseudo_death_B_p
       pseudo_death_per_p_values[i] <- test.res[[i]]$pseudo_death_per_p
       pseudo_death_wald_p_values[i] <- test.res[[i]]$pseudo_death_wal_n4_p
@@ -56,11 +42,9 @@ for (k in c(1:1)){
     pvalue_df[j,2] <- mean(log_rank_prog_p_values < alpha)
     pvalue_df[j,3] <- mean(log_rank_death_p_values < alpha)
     pvalue_df[j,4] <- mean(win_ratio_p_values < alpha)
-    pvalue_df[j,5] <- mean(net_benefit_p_values < alpha)
-    pvalue_df[j,6] <- mean(win_odds_p_values < alpha)
-    pvalue_df[j,7] <-  mean(pseudo_death_Z_p_values < alpha)
-    pvalue_df[j,8] <-  mean(pseudo_death_per_p_values < alpha)
-    pvalue_df[j,9] <-  mean(pseudo_death_wald_p_values < alpha)
+    pvalue_df[j,5] <-  mean(pseudo_death_Z_p_values < alpha)
+    pvalue_df[j,6] <-  mean(pseudo_death_per_p_values < alpha)
+    pvalue_df[j,7] <-  mean(pseudo_death_wald_p_values < alpha)
   } 
   res.ls[[k]] <- pvalue_df
 }
@@ -71,17 +55,22 @@ title<- c("Proportional hazards", "Crossing hazards", "Crossing survival functio
           "Early difference", "Middle difference", "Late difference",
           "Counteracting effect", "Absent effect")
 
-title<- c(expression(tau*" = 0.5"), expression(tau*" = 1"), expression(tau*" = 1.5"),
-          expression(tau*" = 2"), expression(tau*" = 2.5"), expression(tau*" = 3"))
+pdf(file = "plots/power_seminar.pdf", width = 12, height = 4.5)
 
-pdf(file = "plots/power_supp.pdf", width = 6, height = 6.5)
-
-pdf(file = "plots/power_death_diftau.pdf", width = 6, height = 5)
+pal <- setNames(
+  c("#D62728", # 红 red
+    "#FF7F0E", # 橙 orange
+    "#FFD700", # 黄 yellow (gold)
+    "#2CA02C", # 绿 green
+    "#1F77B4", # 蓝 blue
+    "#9467BD"  # 紫 purple
+  ),
+  m.names
+)
 
 for (i in 1:8){
   grp.names <- samplesize_list
-  m.names <-   c("Log-rank PFS", "Log-rank OS", "Win ratio", "Net benefit", 
-                 "Win odds", "Pseudo-death Z", "Pseudo-death\n Permutation",
+  m.names <-   c("Log-rank TTP", "Log-rank OS", "Win statistics", "Pseudo-death Z", "Pseudo-death\n Permutation",
                  "Pseudo-death\n Wald")
   g.var <- rep(grp.names, each=length(m.names))
   m.var <- rep(m.names, times=length(grp.names))
@@ -92,6 +81,7 @@ for (i in 1:8){
   p <- ggplot(data = data, mapping = aes(x = g, y = v, color = m, group = m)) +
     geom_point(size = 1.2) +
     geom_line() +
+    scale_color_manual(values = pal, breaks = m.names, limits = m.names) +
     theme(legend.key.size = unit(2, 'mm'), 
           legend.text = element_text(size = 6),
           axis.title.x  = element_text(size = 10),
@@ -106,6 +96,6 @@ for (i in 1:8){
   plot_list[[i]] <- p
 }
 
-grid.arrange(grobs = plot_list, nrow = 4, ncol = 2)
+grid.arrange(grobs = plot_list, nrow = 2, ncol = 4)
 
 dev.off()

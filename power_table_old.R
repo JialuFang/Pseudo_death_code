@@ -9,11 +9,11 @@ colnames(pvalue_df) <- c("sample_size", "log_rank_prog", "log_rank_death", "win_
                          "pseudo_death_wald")
 
 res.ls <- list()
-for (k in c(1:1)){
+for (k in c(1:8)){
   print(k)
   for (j in c(1:4)){
     samplesize <- samplesize_list[j]
-    file.name <- paste0("./power_data/","Test_",samplesize,"_simu_use",k, ".Rdata")
+    file.name <- paste0("./test_results/","Test_",samplesize,"_simu_use",k, "_supp.Rdata")
     load(file.name)
     print(file.name)
     

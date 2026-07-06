@@ -7,14 +7,14 @@ pvalue_df <- data.frame(matrix(ncol = 9, nrow = 4))
 colnames(pvalue_df) <- c("sample_size", "log_rank_prog", "log_rank_death", "win_ratio", 
                          "net_benefit", "win_odds", "pseudo_death_Z", "pseudo_death_per",
                          "pseudo_death_wald")
-tau_list <- c(0.5, 1, 1.25, 1.5, 1.75, 2)
+tau_list <- c(1.25, 1.5, 1.75, 2)
 
 res.ls <- list()
-for (k in c(1:6)){
+for (k in c(1:4)){
   print(k)
   for (j in c(1:4)){
     samplesize <- samplesize_list[j]
-    file.name <- paste0("./test_results/","Test_",samplesize,"_simu_use1_tau",tau_list[k]*100, ".Rdata")
+    file.name <- paste0("./power_diftau_data/","Test_",samplesize,"_simu_use1_tau",tau_list[k]*100, ".Rdata")
     load(file.name)
     
     log_rank_prog_p_values <- numeric(length(test.res))
@@ -67,12 +67,12 @@ for (k in c(1:6)){
 
 plot_list <- list()
 
-title<- c(expression(tau*" = 0.5"), expression(tau*" = 1"), expression(tau*" = 1.25"),
-          expression(tau*" = 1.5"), expression(tau*" = 1.75"), expression(tau*" = 2"))
+title<- c(expression(tau*" = 1.25"), expression(tau*" = 1.5"), 
+          expression(tau*" = 1.75"), expression(tau*" = 2"))
 
-pdf(file = "plots/power_death_diftau.pdf", width = 6, height = 5)
+pdf(file = "plots/power_death_diftau.pdf", width = 6, height = 4)
 
-for (i in 1:6){
+for (i in 1:4){
   grp.names <- samplesize_list
   m.names <-   c("Log-rank PFS", "Log-rank OS", "Win ratio", "Net benefit", 
                  "Win odds", "Pseudo-death Z", "Pseudo-death\n Permutation",
@@ -100,6 +100,6 @@ for (i in 1:6){
   plot_list[[i]] <- p
 }
 
-grid.arrange(grobs = plot_list, nrow = 3, ncol = 2)
+grid.arrange(grobs = plot_list, nrow = 2, ncol = 2)
 
 dev.off()

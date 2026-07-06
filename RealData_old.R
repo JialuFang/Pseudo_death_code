@@ -42,7 +42,7 @@ png(filename = "plots/realdata_12th.png", width = 2000, height = 1000, res = 300
 
 fit1 <- survfit(Surv(t.oprog, prog) ~ A, data = mydata)
 plot1 <- ggsurvplot(fit1,data = mydata,
-           xlab = "Time(days)", ylab = "Survival probability for PFS", 
+           xlab = "Time(days)", ylab = "Survival probability for TTP", 
            title = "", legend.title = "", 
            legend.labs = c("Control Group", "Treatment Group"),
            palette = c("#E7B800", "#2E9FDF"), 
